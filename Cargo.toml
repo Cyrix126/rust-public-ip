@@ -15,7 +15,7 @@ keywords = ["public", "external", "ip", "async"]
 
 [features]
 default = ["all-providers", "dns-resolver", "http-resolver"]
-dns-resolver = ["hickory-proto", "hickory-client", "hickory-proto/tokio-runtime"]
+dns-resolver = ["hickory-proto", "hickory-client", "hickory-proto/tokio"]
 http-resolver = ["reqwest"]
 
 all-providers = ["cloudflare", "google", "ipify-org", "my-ip-io", "myip-com", "opendns", "seeip-org"]
@@ -39,8 +39,8 @@ futures-util = { version = "0.3", default-features = false, features = ["alloc"]
 tokio = "1"
 
 # DNS Resolver
-hickory-client = { version = "0.24", optional = true }
-hickory-proto = { version = "0.24", optional = true, default-features = false }
+hickory-client = { git = "https://github.com/hickory-dns/hickory-dns.git", rev = "c141df9468b4039976ff1fcb298b6e9c84798520", version = "0.25.0", optional = true }
+hickory-proto = { git = "https://github.com/hickory-dns/hickory-dns.git", rev = "c141df9468b4039976ff1fcb298b6e9c84798520", version = "0.25.0", optional = true, default-features = false }
 
 # HTTP Resolver
 reqwest = { version = "0.12.8", features = ["rustls-tls-native-roots", "json"], optional = true }

@@ -6,19 +6,20 @@ use std::task::{Context, Poll};
 
 use futures_core::Stream;
 use futures_util::{future, ready, stream, StreamExt};
+use hickory_proto::runtime::TokioRuntimeProvider;
 use hickory_proto::{
-    error::{ProtoError, ProtoErrorKind},
     op::Query,
-    rr::{Name, RData, RecordType},
+    rr::{DNSClass, Name, RData, RecordType},
     udp::UdpClientStream,
     xfer::{DnsHandle, DnsRequestOptions, DnsResponse},
 };
+use hickory_proto::{ProtoError, ProtoErrorKind};
 use pin_project_lite::pin_project;
 use tracing::trace_span;
 use tracing_futures::Instrument;
 
-use hickory_client::{client::AsyncClient, rr::DNSClass};
-use tokio::{net::UdpSocket, runtime::Handle};
+use hickory_client::client::Client;
+use tokio::runtime::Handle;
 
 use crate::{Resolutions, Version};
 
@@ -326,8 +327,8 @@ async fn dns_query(
     query_opts: DnsRequestOptions,
 ) -> Result<DnsResponse, ProtoError> {
     let handle = Handle::current();
-    let stream = UdpClientStream::<UdpSocket>::new(server);
-    let (client, bg) = AsyncClient::connect(stream).await?;
+    let stream = UdpClientStream::builder(server, TokioRuntimeProvider::new()).build();
+    let (client, bg) = Client::connect(stream).await?;
     handle.spawn(bg);
     client
         .lookup(query, query_opts)
@@ -343,9 +344,9 @@ fn parse_dns_response(response: DnsResponse, method: QueryMethod) -> Result<IpAd
         None => return Err(crate::Error::Addr),
     };
     match answer.data() {
-        Some(RData::A(addr)) if method == QueryMethod::A => Ok(IpAddr::V4(addr.0)),
-        Some(RData::AAAA(addr)) if method == QueryMethod::AAAA => Ok(IpAddr::V6(addr.0)),
-        Some(RData::TXT(txt)) if method == QueryMethod::TXT => match txt.iter().next() {
+        RData::A(addr) if method == QueryMethod::A => Ok(IpAddr::V4(addr.0)),
+        RData::AAAA(addr) if method == QueryMethod::AAAA => Ok(IpAddr::V6(addr.0)),
+        RData::TXT(txt) if method == QueryMethod::TXT => match txt.iter().next() {
             Some(addr_bytes) => Ok(str::from_utf8(&addr_bytes[..])?.parse()?),
             None => Err(crate::Error::Addr),
         },
