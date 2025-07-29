@@ -43,7 +43,7 @@ hickory-client = { version = "0.25", optional = true }
 hickory-proto = { version = "0.25", optional = true, default-features = false }
 
 # HTTP Resolver
-reqwest = { version = "0.12.12", features = ["rustls-tls-native-roots", "json"], optional = true }
+reqwest = { version = "0.12.12", default-features=false, features = ["rustls-tls-native-roots", "json", "rustls-tls"], optional = true }
 url = "2.5.4"
 serde_json = "1.0.139"
 serde = { version = "1.0.218", features = ["derive"] }
