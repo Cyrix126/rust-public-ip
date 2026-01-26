@@ -105,16 +105,19 @@ pub struct Details {
 
 impl Details {
     /// URL used in the resolution of the associated IP address
+    #[must_use] 
     pub fn url(&self) -> &Url {
         &self.url
     }
 
     /// HTTP server used in the resolution of our IP address.
+    #[must_use] 
     pub fn server(&self) -> Option<SocketAddr> {
         self.server
     }
 
     /// The extract method used in the resolution of the associated IP address
+    #[must_use] 
     pub fn extract_method(&self) -> ExtractMethod {
         self.method
     }
@@ -181,7 +184,7 @@ pin_project! {
     }
 }
 
-impl<'r> Stream for HttpResolutions<'r> {
+impl Stream for HttpResolutions<'_> {
     type Item = Result<(IpAddr, crate::Details), crate::Error>;
 
     fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {

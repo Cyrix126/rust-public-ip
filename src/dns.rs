@@ -304,7 +304,7 @@ pin_project! {
     }
 }
 
-impl<'r> Stream for DnsResolutions<'r> {
+impl Stream for DnsResolutions<'_> {
     type Item = Result<(IpAddr, crate::Details), crate::Error>;
 
     fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
