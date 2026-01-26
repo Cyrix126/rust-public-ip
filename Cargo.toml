@@ -43,10 +43,10 @@ hickory-client = { version = "0.25", optional = true }
 hickory-proto = { version = "0.25", optional = true, default-features = false, features=["tokio", "std"] }
 
 # HTTP Resolver
-reqwest = { version = "0.12.22", default-features=false, features = ["rustls-tls-native-roots", "json", "rustls-tls"], optional = true }
-url = "2.5.4"
-serde_json = "1.0.141"
-serde = { version = "1.0.219", features = ["derive"] }
+reqwest = { version = "0.13.1", default-features=false, features = ["json"], optional = true }
+url = "2.5.8"
+serde_json = "1.0.149"
+serde = { version = "1.0.228", features = ["derive"] }
 
 [dev-dependencies]
 tokio = { version = "~1", features = ["macros"] }
